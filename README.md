@@ -1,6 +1,10 @@
 # App cliente impago 
 
-Esta app fue creada por diegoveloper.
+Esta app fue creada por diegoveloper, sígueme en:
+
+- https://twitter.com/diegoveloper
+- https://www.tiktok.com/@diegoveloper
+- https://youtube.com/@diegoveloper
 
 ## Instala el app en tu teléfono
 
