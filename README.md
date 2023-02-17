@@ -25,3 +25,6 @@ Click aquí para descargar el instalador -> <a href="https://github.com/diegovel
 ## El video del tutorial lo encuentras aquí
 
 [![](http://img.youtube.com/vi/1ygzuqjkLX4/0.jpg)](https://www.youtube.com/watch?v=1ygzuqjkLX4 )
+
+
+[![](http://img.youtube.com/vi/_jPGHKsoBxw/0.jpg)](https://www.youtube.com/watch?v=_jPGHKsoBxw )
