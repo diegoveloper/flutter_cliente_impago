@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cliente_impago/widgets/gravity.dart';
+import 'package:cliente_impago/widgets/saw.dart';
 import 'package:flutter/material.dart';
 import 'package:snappable_thanos/snappable_thanos.dart';
 
@@ -26,6 +27,7 @@ enum AlertType {
   gravity,
   windows,
   snap,
+  saw,
 }
 
 class Dashboard extends StatefulWidget {
@@ -44,7 +46,15 @@ class _DashboardState extends State<Dashboard> {
   final player = AudioPlayer();
   final extraPlayer = AudioPlayer();
   final key = GlobalKey<SnappableState>();
-  AlertType type = AlertType.gravity;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  AlertType type = AlertType.saw;
+
+  void _selectOption(AlertType alertType) {
+    setState(() {
+      type = alertType;
+    });
+    scaffoldKey.currentState?.closeDrawer();
+  }
 
   @override
   void dispose() {
@@ -60,6 +70,7 @@ class _DashboardState extends State<Dashboard> {
             'assets/extras/windows.jpg',
           )
         : Scaffold(
+            key: scaffoldKey,
             drawer: Drawer(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -69,29 +80,50 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     MaterialButton(
                       color: Colors.blue,
-                      child: const Text('Gravity'),
+                      child: const Text(
+                        'Gravity',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                       onPressed: () {
-                        setState(() {
-                          type = AlertType.gravity;
-                        });
+                        _selectOption(AlertType.gravity);
                       },
                     ),
                     MaterialButton(
                       color: Colors.blue,
-                      child: const Text('Windows Error'),
+                      child: const Text(
+                        'Windows Error',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                       onPressed: () {
-                        setState(() {
-                          type = AlertType.windows;
-                        });
+                        _selectOption(AlertType.windows);
                       },
                     ),
                     MaterialButton(
                       color: Colors.blue,
-                      child: const Text('Thanos Snap'),
+                      child: const Text(
+                        'Thanos Snap',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                       onPressed: () {
-                        setState(() {
-                          type = AlertType.snap;
-                        });
+                        _selectOption(AlertType.snap);
+                      },
+                    ),
+                    MaterialButton(
+                      color: Colors.blue,
+                      child: const Text(
+                        'Saw',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () {
+                        _selectOption(AlertType.saw);
                       },
                     ),
                   ],
@@ -167,6 +199,7 @@ class _DashboardState extends State<Dashboard> {
                     backgroundColor: Colors.blue[700],
                     child: const Icon(Icons.add),
                     onPressed: () async {
+                      bool showAlertDialog = true;
                       if (type == AlertType.gravity) {
                         gravityController.start();
                         await Future.delayed(const Duration(milliseconds: 300));
@@ -177,10 +210,9 @@ class _DashboardState extends State<Dashboard> {
                             .seek(const Duration(milliseconds: 150));
                         await extraPlayer.play(AssetSource('sounds/snap.mp3'));
                         key.currentState?.snap();
-                        //await Future.delayed(const Duration(seconds: 1));
                         await player.play(AssetSource('sounds/thanos.aac'));
                         await Future.delayed(const Duration(seconds: 4));
-                      } else {
+                      } else if (type == AlertType.windows) {
                         await player.seek(const Duration(milliseconds: 500));
                         await player
                             .play(AssetSource('sounds/error_windows.mp3'));
@@ -188,24 +220,34 @@ class _DashboardState extends State<Dashboard> {
                           _windowsError = true;
                         });
                         await Future.delayed(const Duration(seconds: 3));
+                      } else if (type == AlertType.saw) {
+                        showAlertDialog = false;
+                        if (mounted) {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(pageBuilder: (_, animate, __) {
+                              return const Saw();
+                            }),
+                          );
+                        }
                       }
-
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        barrierColor: Colors.transparent,
-                        builder: (_) => AlertDialog(
-                          backgroundColor: Colors.transparent,
-                          content: _PayYourDebt(() {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              key.currentState?.reset();
-                              _showWarning = false;
-                              _windowsError = false;
-                            });
-                          }),
-                        ),
-                      );
+                      if (showAlertDialog) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          barrierColor: Colors.transparent,
+                          builder: (_) => AlertDialog(
+                            backgroundColor: Colors.transparent,
+                            content: _PayYourDebt(() {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                key.currentState?.reset();
+                                _showWarning = false;
+                                _windowsError = false;
+                              });
+                            }),
+                          ),
+                        );
+                      }
                     },
                   ),
           );
