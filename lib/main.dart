@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cliente_impago/widgets/gravity.dart';
+import 'package:cliente_impago/widgets/jurassic_park.dart';
 import 'package:cliente_impago/widgets/saw.dart';
 import 'package:flutter/material.dart';
 import 'package:snappable_thanos/snappable_thanos.dart';
@@ -28,6 +29,7 @@ enum AlertType {
   windows,
   snap,
   saw,
+  jurassicPark,
 }
 
 class Dashboard extends StatefulWidget {
@@ -124,6 +126,18 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       onPressed: () {
                         _selectOption(AlertType.saw);
+                      },
+                    ),
+                    MaterialButton(
+                      color: Colors.blue,
+                      child: const Text(
+                        'Jurassic Park',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () {
+                        _selectOption(AlertType.jurassicPark);
                       },
                     ),
                   ],
@@ -229,6 +243,15 @@ class _DashboardState extends State<Dashboard> {
                             }),
                           );
                         }
+                      } else if (type == AlertType.jurassicPark) {
+                        showAlertDialog = false;
+                        if (mounted) {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(pageBuilder: (_, animate, __) {
+                              return const JurassicPark();
+                            }),
+                          );
+                        }
                       }
                       if (showAlertDialog) {
                         showDialog(
@@ -237,7 +260,7 @@ class _DashboardState extends State<Dashboard> {
                           barrierColor: Colors.transparent,
                           builder: (_) => AlertDialog(
                             backgroundColor: Colors.transparent,
-                            content: _PayYourDebt(() {
+                            content: PayYourDebt(() {
                               Navigator.of(context).pop();
                               setState(() {
                                 key.currentState?.reset();
@@ -309,12 +332,15 @@ class _MyBottomNavigation extends StatelessWidget {
   }
 }
 
-class _PayYourDebt extends StatelessWidget {
-  const _PayYourDebt(
-    this.onTap,
-  );
+class PayYourDebt extends StatelessWidget {
+  const PayYourDebt(
+    this.onTap, {
+    this.height,
+    super.key,
+  });
 
   final VoidCallback onTap;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -325,7 +351,7 @@ class _PayYourDebt extends StatelessWidget {
           borderRadius: BorderRadius.circular(40),
           color: Colors.red,
         ),
-        height: 200,
+        height: height ?? 200,
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Center(
